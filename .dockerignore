@@ -1,0 +1,53 @@
+# Keep the image small & avoid leaking secrets
+.git
+.gitignore
+.dockerignore
+
+
+# Never bake secrets into the image
+.env
+.env.*
+!.env.example
+
+
+# Python caches & venvs
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+
+# Build/test artifacts
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.htmlcov/
+.coverage
+
+
+# Local data & notebooks
+memory.db
+*.sqlite
+*.sqlite3
+notebooks/
+.ipynb_checkpoints/
+logs/
+data/
+tmp/
+
+
+# OS junk & editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+
+# Not needed inside runtime image
+tests/
+evaluator/
+Dockerfile
+Makefile

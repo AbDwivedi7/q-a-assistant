@@ -1,5 +1,6 @@
-from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Depends, Request
+from fastapi.responses import JSONResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -18,7 +19,9 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])  # 
 
 app = FastAPI(title="AI Q&A Assistant", version="0.1.0")
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, lambda r, e: (e,))
+@app.exception_handler(RateLimitExceeded)
+async def _rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse({"detail": "Rate limit exceeded"}, status_code=429)
 app.add_middleware(SlowAPIMiddleware)
 app.add_middleware(
     CORSMiddleware,
@@ -38,7 +41,7 @@ mem = MemoryStore()
 
 @app.post("/chat", response_model=ChatResponse)
 @limiter.limit("10/second")
-async def chat(req: ChatRequest, _=Depends(enforce_bearer_auth)):
+async def chat(request: Request, req: ChatRequest, _=Depends(enforce_bearer_auth)):
     # Memory: stitch last few turns for context (optional)
     history = mem.last_k(req.user_id, k=6)
     if history:

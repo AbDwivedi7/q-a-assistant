@@ -1,1 +1,58 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+
+
+# Virtual environments
+.venv/
+venv/
+.envrc
+
+
+# Environment files (keep example)
 .env
+.env.*
+!.env.example
+
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.coverage
+htmlcov/
+
+
+# Build artifacts
+build/
+dist/
+*.pyc
+*.egg-info/
+
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+
+# IDE/editor
+.vscode/
+.idea/
+
+
+# App data / local state
+memory.db
+*.sqlite
+*.sqlite3
+logs/
+data/
+tmp/
+.ipynb_checkpoints/
+notebooks/
+
+
+# Docker / compose overrides
+docker-compose.override.yml
