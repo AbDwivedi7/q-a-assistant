@@ -1,0 +1,10 @@
+- id: weather_1
+  question: What's the weather in London right now?
+  expect_action: get_weather
+- id: stock_1
+  question: price of AAPL today?
+  expect_action: get_stock_price
+- id: general_1
+  question: Who wrote Pride and Prejudice?
+  expect_action: none
+  expect_contains: Jane Austen
