@@ -32,7 +32,7 @@ curl -X POST http://localhost:8000/chat \
   -d '{"user_id":"demo","message":"What\'s the weather in Paris?"}'
 ```
 
-### 3) UI Interface to chat
+### 4) UI Interface to chat
 ```bash
 http://localhost:8000/
 ```
