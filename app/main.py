@@ -1,6 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -13,6 +13,7 @@ from .tools import ToolRegistry, WeatherTool, StocksTool
 from .core.router import Router
 from .core.memory import MemoryStore
 from .core.context import ContextManager
+from fastapi.staticfiles import StaticFiles
 
 configure_logging()
 
@@ -31,6 +32,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/ui", StaticFiles(directory="web", html=True), name="ui")
+
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/ui/")
 
 # Global singletons
 registry = ToolRegistry()

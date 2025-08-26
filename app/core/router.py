@@ -47,7 +47,7 @@ class Router:
             final, ans_lat = call_answer_llm(
                 f"User asked: {user_text}\nTool {action} returned: {raw}.{snippet_block}\n{guard}"
             )
-            return final, action, 0.0, ans_lat
+            return final, action, model_latency, ans_lat
 
         # LLM-only path: include at most top-2 relevant snippets, not full history
         snippets = self.ctx.select_snippets(user_id, user_text, k=2)

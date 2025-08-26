@@ -32,19 +32,44 @@ curl -X POST http://localhost:8000/chat \
   -d '{"user_id":"demo","message":"What\'s the weather in Paris?"}'
 ```
 
-### 4) CLI mode
+### 3) UI Interface to chat
+```bash
+http://localhost:8000/
+```
+
+### 5) CLI mode
 ```bash
 python -m app.cli chat
+```
+```bash
+python -m app.cli chat what is the weather in london
+```
+```bash
+python -m app.cli chat -u Abhishek price of AAPL
+```
+
+### 6) Evaluation
+Run the simple router eval:
+```
+python -m app.core.evaluation evaluator/testcases.yaml
 ```
 
 ## Project Structure
 ```
 app/
-  core/           # routing, LLM, prompts, memory, retrieval, eval
+  core/           # context, evaluation, llm, memory, prompts, retrieval, router 
   models/         # request/response schemas
   tools/          # tool implementations + registry
+  config.py       # config required like apenai api key, stock provider, weather api endpoints etc
+  logging.py      # logging
   main.py         # FastAPI app
   cli.py          # CLI interface
+  security.py     # Authorization for the API Endpoints
+
+web/
+  app.js          # Javascript file for the Web UI
+  index.html      # HTML file for the Web UI
+  style.css       # Stylesheet file for the Web UI
 ```
 
 ## Add a New Tool
@@ -64,12 +89,6 @@ from .tools.my_tool import MyTool
 registry.register(MyTool())
 ```
 The router LLM will see tool names/desc from the prompt; update `prompts.py` to mention your new tool and guidance rules.
-
-## Evaluation
-Run the simple router eval:
-```bash
-python -c "import asyncio; from app.core.evaluation import evaluate_router; print(asyncio.run(evaluate_router('evaluator/testcases.yaml')))"
-```
 
 This returns per-case correctness; extend with more cases and metrics.
 
