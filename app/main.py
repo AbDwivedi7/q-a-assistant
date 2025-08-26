@@ -12,6 +12,7 @@ from .logging_conf import configure_logging
 from .tools import ToolRegistry, WeatherTool, StocksTool
 from .core.router import Router
 from .core.memory import MemoryStore
+from .core.context import ContextManager
 
 configure_logging()
 
@@ -35,31 +36,28 @@ app.add_middleware(
 registry = ToolRegistry()
 registry.register(WeatherTool())
 registry.register(StocksTool())
-router = Router(registry)
+# router = Router(registry)
 mem = MemoryStore()
+ctx = ContextManager(mem)
+router = Router(registry, mem, ctx)
 
 
 @app.post("/chat", response_model=ChatResponse)
 @limiter.limit("10/second")
 async def chat(request: Request, req: ChatRequest, _=Depends(enforce_bearer_auth)):
-    # Memory: stitch last few turns for context (optional)
-    history = mem.last_k(req.user_id, k=6)
-    if history:
-        prompt = "\n".join([f"{role}: {content}" for role, content in history] + [f"user: {req.message}"])
-    else:
-        prompt = req.message
+    latest = req.message
+    
+    # index the user message for semantic recall
+    ctx.index_message(req.user_id, "user", latest)
 
-    answer, used_tool, tool_latency, model_latency = await router.route_and_answer(prompt)
+    answer, used_tool, tool_latency, model_latency = await router.route_and_answer(req.user_id, latest)
 
+    # persist transcript + index assistant reply
     mem.add(req.user_id, "user", req.message)
     mem.add(req.user_id, "assistant", answer)
+    ctx.index_message(req.user_id, "assistant", answer)
 
-    return ChatResponse(
-        answer=answer,
-        used_tool=used_tool,
-        tool_latency_ms=tool_latency,
-        model_latency_ms=model_latency,
-    )
+    return ChatResponse(answer=answer, used_tool=used_tool, tool_latency_ms=tool_latency, model_latency_ms=model_latency)
 
 
 @app.get("/health")
