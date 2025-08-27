@@ -1,33 +1,27 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI Q&A Assistant</title>
-    <link rel="stylesheet" href="/ui/styles.css" />
-  </head>
-  <body>
-    <header>
-      <h1>AI Q&A Assistant</h1>
-      <div class="settings">
-        <label>Auth Token: <input id="authToken" type="password" value="change-me" /></label>
-        <label>User ID: <input id="userId" type="text" value="demo" /></label>
-        <button id="saveSettings">Save</button>
-      </div>
-    </header>
-
-    <main>
-      <div id="messages" class="messages"></div>
-      <div class="composer">
-        <input id="userInput" type="text" placeholder="Type a message and hit Enter…" />
-        <button id="sendBtn" type="button">Send</button>
-      </div>
-    </main>
-
-    <!-- <footer>
-      <small>Backend: <code>/chat</code> • <a href="/health" target="_blank">Health</a></small>
-    </footer> -->
-
-    <script src="/ui/app.js" defer></script>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>AI Q&A Assistant</title>
+        <link rel="stylesheet" href="/ui/styles.css" />
+    </head>
+    <body>
+        <header>
+            <h1>AI Q&A Assistant</h1>
+            <div class="settings">
+                <label>Auth Token: <input id="authToken" type="password" value="change-me" /></label>
+                <label>User ID: <input id="userId" type="text" value="demo" /></label>
+                <button id="saveSettings">Save</button>
+            </div>
+        </header>
+        <main>
+            <div id="messages" class="messages"></div>
+            <div class="composer">
+                <input id="userInput" type="text" placeholder="Type a message and hit Enter…" />
+                <button id="sendBtn" type="button">Send</button>
+            </div>
+        </main>
+        <script src="/ui/app.js" defer></script>
+    </body>
 </html>

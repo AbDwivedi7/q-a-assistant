@@ -5,23 +5,25 @@ from fastapi.staticfiles import StaticFiles
 
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
+from .limits import limiter
 
 from ..logging_conf import configure_logging
 from ..tools import ToolRegistry, WeatherTool, StocksTool
 from ..core.router import Router
 from ..core.memory import MemoryStore
 from ..core.context import ContextManager
+
 from .routes.chat import router as chat_router
 from .routes.health import router as health_router
-from .limits import limiter  # shared limiter instance
 
 configure_logging()
 
 def create_app() -> FastAPI:
     app = FastAPI(title="AI Q&A Assistant", version="0.1.0")
 
-    # SlowAPI setup
+    # rate limiting
     app.state.limiter = limiter
+
     @app.exception_handler(RateLimitExceeded)
     async def _rate_limit_handler(request: Request, exc: RateLimitExceeded):
         return JSONResponse({"detail": "Rate limit exceeded"}, status_code=429)
@@ -42,21 +44,21 @@ def create_app() -> FastAPI:
     registry.register(WeatherTool())
     registry.register(StocksTool())
 
-    mem = MemoryStore()
+    mem = MemoryStore()          # writes to ./var/data/memory.db
     ctx = ContextManager(mem)
-
-    # Router signature in your current code expects (registry, mem, ctx)
     router = Router(registry, mem, ctx)
 
-    # expose to routes
+    # expose to routes if you need app.state access later
     app.state.registry = registry
     app.state.mem = mem
     app.state.ctx = ctx
     app.state.router = router
 
-    # --- Routes & static files ---
-    app.include_router(chat_router)
-    app.include_router(health_router)
+    # --- Versioned API routes ---
+    app.include_router(health_router, prefix="/api/v1")
+    app.include_router(chat_router, prefix="/api/v1")
+
+    # --- Static UI ---
     app.mount("/ui", StaticFiles(directory="web", html=True), name="ui")
 
     @app.get("/")
