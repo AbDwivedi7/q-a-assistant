@@ -31,6 +31,14 @@ factory = false
 host = "0.0.0.0"
 port = 8000
 
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 addopts = "-q"
+filterwarnings = [
+  "ignore:.*SwigPyPacked.*:DeprecationWarning",
+  "ignore:.*SwigPyObject.*:DeprecationWarning",
+  "ignore:.*swigvarlink.*:DeprecationWarning",
+]

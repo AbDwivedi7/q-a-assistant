@@ -7,7 +7,7 @@ dev:
 	UVICORN_RELOAD=true uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 test:
-	pytest -q
+	python -m pytest -v
 
 format:
 	ruff check --fix . || true

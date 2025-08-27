@@ -188,7 +188,7 @@ Compose (includes Redis):
 
 Run tests:
 
-`pytest -q`
+`python -m pytest -v`
 
 Format & lint:
 
