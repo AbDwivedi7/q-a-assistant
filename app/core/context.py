@@ -5,7 +5,7 @@ from typing import Optional
 from .retrieval import SimpleIndexer
 from .memory import MemoryStore
 
-PRONOUNY = {"there","here","that","those","them","it","same","again","previous","earlier"}
+PRONOUNY_RE = re.compile(r"\b(?:there|here|that|those|them|it|same|again|previous|earlier)\b", re.I)
 
 class ContextManager:
     def __init__(self, mem: MemoryStore):
@@ -28,8 +28,7 @@ class ContextManager:
         return self.mem.get_kv(user_id, "meta", "last_tool")
 
     def looks_followup(self, msg: str) -> bool:
-        ml = msg.lower()
-        return any(w in ml for w in PRONOUNY)
+        return bool(PRONOUNY_RE.search(msg or ""))
 
     def select_snippets(self, user_id: str, query: str, k: int = 2) -> list[str]:
         # semantic retrieval from prior turns

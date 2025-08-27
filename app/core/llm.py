@@ -3,7 +3,7 @@ import time
 from typing import Any
 from tenacity import retry, stop_after_attempt, wait_exponential
 from openai import OpenAI
-from .prompts import TOOL_ROUTER_SYSTEM
+from .prompts import TOOL_ROUTER_SYSTEM, ANSWER_POLISH_SYSTEM
 from ..config import settings
 
 
@@ -39,6 +39,7 @@ def call_answer_llm(prompt: str) -> tuple[str, float]:
         model=settings.OPENAI_MODEL,
         messages=[
             {"role": "system", "content": "You are a helpful, concise AI assistant."},
+            {"role": "system", "content": ANSWER_POLISH_SYSTEM},
             {"role": "user", "content": prompt},
         ],
         temperature=0.2,
